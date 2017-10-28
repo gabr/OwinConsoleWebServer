@@ -12,22 +12,31 @@ namespace OwinConsole
 {
   using AppFunc = Func<IDictionary<string, object>, Task>;
 
-  class Program
-  {
-    static void Main(string[] args)
-    {
-      string uri = "http://localhost:8080";
+  /* To run on IIS
 
-      using (WebApp.Start<Settings>(uri))
-      {
-        Console.WriteLine("Server started");
-        Console.ReadKey();
-        Console.WriteLine("Server closed");
-      }
-    }
-  }
+    The class Settings had to be renammed to Startup.
+    The build target directory had to be changed from bin\Debug to just bin.
+    The App.config file had to be renammed to Web.config.
 
-  class Settings
+  */
+
+  // not required for IIS
+  //class Program
+  //{
+  //  static void Main(string[] args)
+  //  {
+  //    string uri = "http://localhost:8080";
+  //
+  //    using (WebApp.Start<Startup>(uri))
+  //    {
+  //      Console.WriteLine("Server started");
+  //      Console.ReadKey();
+  //      Console.WriteLine("Server closed");
+  //    }
+  //  }
+  //}
+
+  public class Startup
   {
     public void Configuration(IAppBuilder app)
     {
