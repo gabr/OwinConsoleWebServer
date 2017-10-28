@@ -106,6 +106,8 @@ namespace OwinConsole
       {
         return sw.WriteAsync("execute order 88");
       }
+
+      // !!!! NEVER USES _nextComponentInvoke so next components are not called
     }
   }
 }
