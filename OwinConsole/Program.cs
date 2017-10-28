@@ -32,6 +32,29 @@ namespace OwinConsole
     {
       //app.Run((ctx) => { return ctx.Response.WriteAsync("execute order 88"); });
       //app.UseWelcomePage();
+
+      app.Use(async (environment, next) =>
+      {
+        try
+        {
+          foreach (var k in environment.Environment.Keys)
+            Console.WriteLine($"{k} -> [{environment.Environment[k]?.GetType()?.Name ?? "null"}] '{environment.Environment[k]?.ToString() ?? "null"}'");
+
+          await next();
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.ToString());
+        }
+      });
+
+      app.Use(async (environment, next) =>
+      {
+        Console.WriteLine("Requesting: " + environment.Request.Path);
+        await next();
+        Console.WriteLine("Response: " + environment.Response.StatusCode);
+      });
+
       app.UseOrderPage();
     }
   }
@@ -55,7 +78,7 @@ namespace OwinConsole
     public Task Invoke(IDictionary<string, object> environment)
     {
       //foreach (var k in environment.Keys)
-      //  Console.WriteLine($"{k} -> [{environment[k].GetType().Name}] '{environment[k].ToString()}'");
+      //  Console.WriteLine($"{k} -> [{environment[k]?.GetType()?.Name ?? "null"}] '{environment[k]?.ToString() ?? "null"}'");
       //
       ///* example result:
 
