@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Owin;
 using Microsoft.Owin.Hosting;
+using System.Web.Http;
 
 namespace OwinConsole
 {
@@ -33,34 +34,35 @@ namespace OwinConsole
       //app.Run((ctx) => { return ctx.Response.WriteAsync("execute order 88"); });
       //app.UseWelcomePage();
 
-      app.Use(async (environment, next) =>
-      {
-        foreach (var k in environment.Environment.Keys)
-          Console.WriteLine($"{k} -> [{environment.Environment[k]?.GetType()?.Name ?? "null"}] '{environment.Environment[k]?.ToString() ?? "null"}'");
-
-        /* example result:
-
-            owin.RequestPath        -> [String] '/'
-            owin.ResponseHeaders    -> [ResponseHeadersDictionary] 'Microsoft.Owin.Host.HttpListener.RequestProcessing.ResponseHeadersDictionary'
-            owin.RequestHeaders     -> [RequestHeadersDictionary]  'Microsoft.Owin.Host.HttpListener.RequestProcessing.RequestHeadersDictionary'
-            owin.ResponseBody       -> [HttpListenerStreamWrapper] 'Microsoft.Owin.Host.HttpListener.RequestProcessing.HttpListenerStreamWrapper'
-            owin.RequestBody        -> [HttpListenerStreamWrapper] 'Microsoft.Owin.Host.HttpListener.RequestProcessing.HttpListenerStreamWrapper'
-            owin.RequestId          -> [String] '00000000-0000-0000-6000-0080020000fa'
-            owin.ResponseStatusCode -> [Int32] '200'
-            owin.RequestQueryString -> [String] ''
-            owin.CallCancelled      -> [CancellationToken] 'System.Threading.CancellationToken'
-            owin.RequestMethod      -> [String] 'GET'
-            owin.RequestScheme      -> [String] 'http'
-            owin.RequestPathBase    -> [String] ''
-            owin.RequestProtocol    -> [String] 'HTTP/1.1'
-            owin.Version            -> [String] '1.0'
-            host.TraceOutput        -> [DualWriter] 'Microsoft.Owin.Hosting.Tracing.DualWriter'
-            host.AppName            -> [String] 'OwinConsole.Settings, OwinConsole, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'
-            host.OnAppDisposing     -> [CancellationToken] 'System.Threading.CancellationToken'
-        */
-
-        await next();
-      });
+      //app.Use(async (environment, next) =>
+      //{
+      //  foreach (var k in environment.Environment.Keys)
+      //    Console.WriteLine($"{k} -> [{environment.Environment[k]?.GetType()?.Name ?? "null"}] " +
+      //      "'{environment.Environment[k]?.ToString() ?? "null"}'");
+      //
+      //  /* example result:
+      //
+      //      owin.RequestPath        -> [String] '/'
+      //      owin.ResponseHeaders    -> [ResponseHeadersDictionary] 'Microsoft.Owin.Host.HttpListener.RequestProcessing.ResponseHeadersDictionary'
+      //      owin.RequestHeaders     -> [RequestHeadersDictionary]  'Microsoft.Owin.Host.HttpListener.RequestProcessing.RequestHeadersDictionary'
+      //      owin.ResponseBody       -> [HttpListenerStreamWrapper] 'Microsoft.Owin.Host.HttpListener.RequestProcessing.HttpListenerStreamWrapper'
+      //      owin.RequestBody        -> [HttpListenerStreamWrapper] 'Microsoft.Owin.Host.HttpListener.RequestProcessing.HttpListenerStreamWrapper'
+      //      owin.RequestId          -> [String] '00000000-0000-0000-6000-0080020000fa'
+      //      owin.ResponseStatusCode -> [Int32] '200'
+      //      owin.RequestQueryString -> [String] ''
+      //      owin.CallCancelled      -> [CancellationToken] 'System.Threading.CancellationToken'
+      //      owin.RequestMethod      -> [String] 'GET'
+      //      owin.RequestScheme      -> [String] 'http'
+      //      owin.RequestPathBase    -> [String] ''
+      //      owin.RequestProtocol    -> [String] 'HTTP/1.1'
+      //      owin.Version            -> [String] '1.0'
+      //      host.TraceOutput        -> [DualWriter] 'Microsoft.Owin.Hosting.Tracing.DualWriter'
+      //      host.AppName            -> [String] 'OwinConsole.Settings, OwinConsole, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'
+      //      host.OnAppDisposing     -> [CancellationToken] 'System.Threading.CancellationToken'
+      //  */
+      //
+      //  await next();
+      //});
 
       app.Use(async (environment, next) =>
       {
@@ -69,7 +71,20 @@ namespace OwinConsole
         Console.WriteLine("Response: " + environment.Response.StatusCode);
       });
 
+      ConfigureWebApi(app);
+
       app.UseOrderPage();
+    }
+
+    private void ConfigureWebApi(IAppBuilder app)
+    {
+      var config = new HttpConfiguration();
+      config.Routes.MapHttpRoute(
+        "DefaultApi",
+        "api/{controller}/{id}",
+        new { id = RouteParameter.Optional });
+
+      app.UseWebApi(config);
     }
   }
 
