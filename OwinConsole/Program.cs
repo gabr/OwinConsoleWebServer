@@ -35,17 +35,31 @@ namespace OwinConsole
 
       app.Use(async (environment, next) =>
       {
-        try
-        {
-          foreach (var k in environment.Environment.Keys)
-            Console.WriteLine($"{k} -> [{environment.Environment[k]?.GetType()?.Name ?? "null"}] '{environment.Environment[k]?.ToString() ?? "null"}'");
+        foreach (var k in environment.Environment.Keys)
+          Console.WriteLine($"{k} -> [{environment.Environment[k]?.GetType()?.Name ?? "null"}] '{environment.Environment[k]?.ToString() ?? "null"}'");
 
-          await next();
-        }
-        catch (Exception ex)
-        {
-          Console.WriteLine(ex.ToString());
-        }
+        /* example result:
+
+            owin.RequestPath        -> [String] '/'
+            owin.ResponseHeaders    -> [ResponseHeadersDictionary] 'Microsoft.Owin.Host.HttpListener.RequestProcessing.ResponseHeadersDictionary'
+            owin.RequestHeaders     -> [RequestHeadersDictionary]  'Microsoft.Owin.Host.HttpListener.RequestProcessing.RequestHeadersDictionary'
+            owin.ResponseBody       -> [HttpListenerStreamWrapper] 'Microsoft.Owin.Host.HttpListener.RequestProcessing.HttpListenerStreamWrapper'
+            owin.RequestBody        -> [HttpListenerStreamWrapper] 'Microsoft.Owin.Host.HttpListener.RequestProcessing.HttpListenerStreamWrapper'
+            owin.RequestId          -> [String] '00000000-0000-0000-6000-0080020000fa'
+            owin.ResponseStatusCode -> [Int32] '200'
+            owin.RequestQueryString -> [String] ''
+            owin.CallCancelled      -> [CancellationToken] 'System.Threading.CancellationToken'
+            owin.RequestMethod      -> [String] 'GET'
+            owin.RequestScheme      -> [String] 'http'
+            owin.RequestPathBase    -> [String] ''
+            owin.RequestProtocol    -> [String] 'HTTP/1.1'
+            owin.Version            -> [String] '1.0'
+            host.TraceOutput        -> [DualWriter] 'Microsoft.Owin.Hosting.Tracing.DualWriter'
+            host.AppName            -> [String] 'OwinConsole.Settings, OwinConsole, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'
+            host.OnAppDisposing     -> [CancellationToken] 'System.Threading.CancellationToken'
+        */
+
+        await next();
       });
 
       app.Use(async (environment, next) =>
@@ -77,30 +91,6 @@ namespace OwinConsole
 
     public Task Invoke(IDictionary<string, object> environment)
     {
-      //foreach (var k in environment.Keys)
-      //  Console.WriteLine($"{k} -> [{environment[k]?.GetType()?.Name ?? "null"}] '{environment[k]?.ToString() ?? "null"}'");
-      //
-      ///* example result:
-
-      //    owin.RequestPath        -> [String] '/'
-      //    owin.ResponseHeaders    -> [ResponseHeadersDictionary] 'Microsoft.Owin.Host.HttpListener.RequestProcessing.ResponseHeadersDictionary'
-      //    owin.RequestHeaders     -> [RequestHeadersDictionary]  'Microsoft.Owin.Host.HttpListener.RequestProcessing.RequestHeadersDictionary'
-      //    owin.ResponseBody       -> [HttpListenerStreamWrapper] 'Microsoft.Owin.Host.HttpListener.RequestProcessing.HttpListenerStreamWrapper'
-      //    owin.RequestBody        -> [HttpListenerStreamWrapper] 'Microsoft.Owin.Host.HttpListener.RequestProcessing.HttpListenerStreamWrapper'
-      //    owin.RequestId          -> [String] '00000000-0000-0000-6000-0080020000fa'
-      //    owin.ResponseStatusCode -> [Int32] '200'
-      //    owin.RequestQueryString -> [String] ''
-      //    owin.CallCancelled      -> [CancellationToken] 'System.Threading.CancellationToken'
-      //    owin.RequestMethod      -> [String] 'GET'
-      //    owin.RequestScheme      -> [String] 'http'
-      //    owin.RequestPathBase    -> [String] ''
-      //    owin.RequestProtocol    -> [String] 'HTTP/1.1'
-      //    owin.Version            -> [String] '1.0'
-      //    host.TraceOutput        -> [DualWriter] 'Microsoft.Owin.Hosting.Tracing.DualWriter'
-      //    host.AppName            -> [String] 'OwinConsole.Settings, OwinConsole, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'
-      //    host.OnAppDisposing     -> [CancellationToken] 'System.Threading.CancellationToken'
-      //*/
-
       var response = environment["owin.ResponseBody"] as Stream;
       using (var sw = new StreamWriter(response))
       {
