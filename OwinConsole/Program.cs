@@ -44,7 +44,7 @@ namespace OwinConsole
     }
   }
 
-  class OrderComponent
+  class OrderComponent // known also as Middleware
   {
     private AppFunc _nextComponentInvoke;
     public OrderComponent(AppFunc next)
